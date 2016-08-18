@@ -1,0 +1,153 @@
+create table ACT_HI_PROCINST (
+    ID_ TEXT not null,
+    PROC_INST_ID_ TEXT not null,
+    BUSINESS_KEY_ TEXT,
+    PROC_DEF_ID_ TEXT not null,
+    START_TIME_ TEXT not null,
+    END_TIME_ TEXT,
+    DURATION_ bigint,
+    START_USER_ID_ TEXT,
+    START_ACT_ID_ TEXT,
+    END_ACT_ID_ TEXT,
+    SUPER_PROCESS_INSTANCE_ID_ TEXT,
+    DELETE_REASON_ TEXT,
+    TENANT_ID_ TEXT default '',
+    NAME_ TEXT,
+    primary key (ID_),
+    unique (PROC_INST_ID_)
+);
+
+create table ACT_HI_ACTINST (
+    ID_ TEXT not null,
+    PROC_DEF_ID_ TEXT not null,
+    PROC_INST_ID_ TEXT not null,
+    EXECUTION_ID_ TEXT not null,
+    ACT_ID_ TEXT not null,
+    TASK_ID_ TEXT,
+    CALL_PROC_INST_ID_ TEXT,
+    ACT_NAME_ TEXT,
+    ACT_TYPE_ TEXT not null,
+    ASSIGNEE_ TEXT,
+    START_TIME_ TEXT not null,
+    END_TIME_ TEXT,
+    DURATION_ INTEGER,
+    TENANT_ID_ TEXT default '',
+    primary key (ID_)
+);
+
+create table ACT_HI_TASKINST (
+    ID_ TEXT not null,
+    PROC_DEF_ID_ TEXT,
+    TASK_DEF_KEY_ TEXT,
+    PROC_INST_ID_ TEXT,
+    EXECUTION_ID_ TEXT,
+    NAME_ TEXT,
+    PARENT_TASK_ID_ TEXT,
+    DESCRIPTION_ TEXT,
+    OWNER_ TEXT,
+    ASSIGNEE_ TEXT,
+    START_TIME_ TEXT not null,
+    CLAIM_TIME_ TEXT,
+    END_TIME_ TEXT,
+    DURATION_ INTEGER,
+    DELETE_REASON_ TEXT,
+    PRIORITY_ INTEGER,
+    DUE_DATE_ TEXT,
+    FORM_KEY_ TEXT,
+    CATEGORY_ TEXT,
+    TENANT_ID_ TEXT default '',
+    primary key (ID_)
+);
+
+create table ACT_HI_VARINST (
+    ID_ TEXT not null,
+    PROC_INST_ID_ TEXT,
+    EXECUTION_ID_ TEXT,
+    TASK_ID_ TEXT,
+    NAME_ TEXT not null,
+    VAR_TYPE_ TEXT,
+    REV_ INTEGER,
+    BYTEARRAY_ID_ TEXT,
+    DOUBLE_ REAL,
+    LONG_ INTEGER,
+    TEXT_ TEXT,
+    TEXT2_ TEXT,
+    CREATE_TIME_ TEXT,
+    LAST_UPDATED_TIME_ TEXT,
+    primary key (ID_)
+);
+
+create table ACT_HI_DETAIL (
+    ID_ TEXT not null,
+    TYPE_ TEXT not null,
+    TIME_ TEXT not null,
+    NAME_ TEXT,
+    PROC_INST_ID_ TEXT,
+    EXECUTION_ID_ TEXT,
+    TASK_ID_ TEXT,
+    ACT_INST_ID_ TEXT,
+    VAR_TYPE_ TEXT,
+    REV_ INTEGER,
+    BYTEARRAY_ID_ TEXT,
+    DOUBLE_ REAL,
+    LONG_ INTEGER,
+    TEXT_ TEXT,
+    TEXT2_ TEXT,
+    primary key (ID_)
+);
+
+create table ACT_HI_COMMENT (
+    ID_ TEXT not null,
+    TYPE_ TEXT,
+    TIME_ TEXT not null,
+    USER_ID_ TEXT,
+    TASK_ID_ TEXT,
+    PROC_INST_ID_ TEXT,
+    ACTION_ TEXT,
+    MESSAGE_ TEXT,
+    FULL_MSG_ longvarbinary,
+    primary key (ID_)
+);
+
+create table ACT_HI_ATTACHMENT (
+    ID_ TEXT not null,
+    REV_ INTEGER,
+    USER_ID_ TEXT,
+    NAME_ TEXT,
+    DESCRIPTION_ TEXT,
+    TYPE_ TEXT,
+    TASK_ID_ TEXT,
+    PROC_INST_ID_ TEXT,
+    URL_ TEXT,
+    CONTENT_ID_ TEXT,
+    TIME_ TEXT,
+    primary key (ID_)
+);
+create table ACT_HI_IDENTITYLINK (
+    ID_ TEXT,
+    GROUP_ID_ TEXT,
+    TYPE_ TEXT,
+    USER_ID_ TEXT,
+    TASK_ID_ TEXT,
+    PROC_INST_ID_ TEXT null,
+    primary key (ID_)
+);
+
+create index ACT_IDX_HI_PRO_INST_END on ACT_HI_PROCINST(END_TIME_);
+create index ACT_IDX_HI_PRO_I_BUSKEY on ACT_HI_PROCINST(BUSINESS_KEY_);
+create index ACT_IDX_HI_ACT_INST_START on ACT_HI_ACTINST(START_TIME_);
+create index ACT_IDX_HI_ACT_INST_END on ACT_HI_ACTINST(END_TIME_);
+create index ACT_IDX_HI_DETAIL_PROC_INST on ACT_HI_DETAIL(PROC_INST_ID_);
+create index ACT_IDX_HI_DETAIL_ACT_INST on ACT_HI_DETAIL(ACT_INST_ID_);
+create index ACT_IDX_HI_DETAIL_TIME on ACT_HI_DETAIL(TIME_);
+create index ACT_IDX_HI_DETAIL_NAME on ACT_HI_DETAIL(NAME_);
+create index ACT_IDX_HI_DETAIL_TASK_ID on ACT_HI_DETAIL(TASK_ID_);
+create index ACT_IDX_HI_PROCVAR_PROC_INST on ACT_HI_VARINST(PROC_INST_ID_);
+create index ACT_IDX_HI_PROCVAR_NAME_TYPE on ACT_HI_VARINST(NAME_, VAR_TYPE_);
+create index ACT_IDX_HI_PROCVAR_TASK_ID on ACT_HI_VARINST(TASK_ID_);
+create index ACT_IDX_HI_ACT_INST_PROCINST on ACT_HI_ACTINST(PROC_INST_ID_, ACT_ID_);
+create index ACT_IDX_HI_ACT_INST_EXEC on ACT_HI_ACTINST(EXECUTION_ID_, ACT_ID_);
+create index ACT_IDX_HI_IDENT_LNK_USER on ACT_HI_IDENTITYLINK(USER_ID_);
+create index ACT_IDX_HI_IDENT_LNK_TASK on ACT_HI_IDENTITYLINK(TASK_ID_);
+create index ACT_IDX_HI_IDENT_LNK_PROCINST on ACT_HI_IDENTITYLINK(PROC_INST_ID_);
+create index ACT_IDX_HI_TASK_INST_PROCINST on ACT_HI_TASKINST(PROC_INST_ID_);

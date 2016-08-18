@@ -1,0 +1,204 @@
+package org.activiti.db.mapping;
+
+import java.util.HashMap;
+
+public class SQLiteMapping {
+
+	public static HashMap<String, String> columnClassMap;
+	
+	static {
+		
+		columnClassMap = new HashMap<String, String>();
+		columnClassMap.put("NAME_", "java.lang.String");
+		columnClassMap.put("VALUE_", "java.lang.String");
+		columnClassMap.put("REV_", "java.lang.Integer");
+		columnClassMap.put("ID_", "java.lang.String");
+		columnClassMap.put("TYPE_", "java.lang.String");
+		columnClassMap.put("LOCK_OWNER_", "java.lang.String");
+		columnClassMap.put("EXCLUSIVE_", "java.lang.Boolean");
+		columnClassMap.put("EXECUTION_ID_", "java.lang.String");
+		columnClassMap.put("PROCESS_INSTANCE_ID_", "java.lang.String");
+		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+		columnClassMap.put("RETRIES_", "java.lang.Integer");
+		columnClassMap.put("EXCEPTION_STACK_ID_", "java.lang.String");
+		columnClassMap.put("EXCEPTION_MSG_", "java.lang.String");
+		columnClassMap.put("DUEDATE_", "java.sql.Timestamp");
+		columnClassMap.put("REPEAT_", "java.lang.String");
+		columnClassMap.put("HANDLER_TYPE_", "java.lang.String");
+		columnClassMap.put("HANDLER_CFG_", "java.lang.String");
+		columnClassMap.put("LOCK_EXP_TIME_", "java.sql.Timestamp");
+		columnClassMap.put("EXECUTION_ID_", "java.lang.String");
+		columnClassMap.put("PROCESS_INSTANCE_ID_", "java.lang.String");
+		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+		columnClassMap.put("RETRIES_", "java.lang.Integer");
+		columnClassMap.put("REPEAT_", "java.lang.String");
+		columnClassMap.put("HANDLER_TYPE_", "java.lang.String");
+		columnClassMap.put("HANDLER_CFG_", "java.lang.String");
+		columnClassMap.put("CATEGORY_", "java.lang.String");
+		columnClassMap.put("KEY_", "java.lang.String");
+		columnClassMap.put("VERSION_", "java.lang.Integer");
+		columnClassMap.put("DEPLOYMENT_ID_", "java.lang.String");
+		columnClassMap.put("RESOURCE_NAME_", "java.lang.String");
+		columnClassMap.put("HAS_START_FORM_KEY_", "java.lang.Boolean");
+		columnClassMap.put("DGRM_RESOURCE_NAME_", "java.lang.String");
+		columnClassMap.put("DESCRIPTION_", "java.lang.String");
+		columnClassMap.put("SUSPENSION_STATE_", "java.lang.Integer");
+		columnClassMap.put("GROUP_ID_", "java.lang.String");
+		columnClassMap.put("USER_ID_", "java.lang.String");
+		columnClassMap.put("TASK_ID_", "java.lang.String");
+		columnClassMap.put("TENANT_ID_", "java.lang.String");
+		columnClassMap.put("HAS_GRAPHICAL_NOTATION_", "java.lang.Integer");
+		columnClassMap.put("PROC_INST_ID_", "java.lang.String");
+		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+		columnClassMap.put("DEPLOY_TIME_", "java.sql.Timestamp");
+		columnClassMap.put("BUSINESS_KEY_", "java.lang.String");
+		columnClassMap.put("PARENT_ID_", "java.lang.String");
+		columnClassMap.put("SUPER_EXEC_", "java.lang.String");
+		columnClassMap.put("ACT_ID_", "java.lang.String");
+		columnClassMap.put("IS_ACTIVE_", "java.lang.Boolean");
+		columnClassMap.put("IS_CONCURRENT_", "java.lang.Boolean");
+		columnClassMap.put("IS_SCOPE_", "java.lang.Boolean");
+		columnClassMap.put("IS_EVENT_SCOPE_", "java.lang.Boolean");
+		columnClassMap.put("SUSPENSION_STATE_", "java.lang.Integer");
+		columnClassMap.put("CACHED_ENT_STATE_", "java.lang.Integer");
+		columnClassMap.put("BYTEARRAY_ID_", "java.lang.String");
+		columnClassMap.put("DOUBLE_", "java.lang.Double");
+		columnClassMap.put("LONG_", "java.lang.Long");
+		columnClassMap.put("TEXT_", "java.lang.String");
+		columnClassMap.put("TEXT2_", "java.lang.String");
+		columnClassMap.put("BYTES_", "java.sql.Blob");
+		columnClassMap.put("GENERATED_", "java.lang.Integer");
+		columnClassMap.put("ProcessDefinitionId", "java.lang.String");
+		columnClassMap.put("ProcessDefinitionKey", "java.lang.String");
+		columnClassMap.put("VAR_TYPE_", "java.lang.String");
+
+		columnClassMap.put("CALL_PROC_INST_ID_", "java.lang.String");
+		columnClassMap.put("ACT_NAME_", "java.lang.String");
+		columnClassMap.put("ACT_TYPE_", "java.lang.String");
+		columnClassMap.put("ASSIGNEE_", "java.lang.String");
+		columnClassMap.put("START_TIME_", "java.sql.Timestamp");
+		columnClassMap.put("END_TIME_", "java.sql.Timestamp");
+		columnClassMap.put("DURATION_", "java.lang.Integer");
+		columnClassMap.put("START_USER_ID_", "java.lang.String");
+		columnClassMap.put("START_ACT_ID_", "java.lang.String");
+		columnClassMap.put("END_ACT_ID_", "java.lang.String");
+		columnClassMap.put("SUPER_PROCESS_INSTANCE_ID_", "java.lang.String");
+		columnClassMap.put("DELETE_REASON_", "java.lang.String");
+
+		//5.21 update
+		columnClassMap.put("PARENT_TASK_ID_", "java.lang.String");
+		columnClassMap.put("TASK_DEF_KEY_", "java.lang.String");
+		columnClassMap.put("OWNER_", "java.lang.String");
+		columnClassMap.put("DELEGATION_", "java.lang.String");
+		columnClassMap.put("PRIORITY_", "java.lang.Integer");
+		columnClassMap.put("CREATE_TIME_", "java.lang.String");
+		columnClassMap.put("DUE_DATE_", "java.lang.String");
+		columnClassMap.put("FORM_KEY_", "java.lang.String");
+
+
+	}
+    
+//	static {
+//		
+//		columnClassMap = new HashMap<String, String>();
+//		columnClassMap.put("NAME_", "java.lang.String");
+//		columnClassMap.put("VALUE_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("ID_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("TYPE_", "java.lang.String");
+//		columnClassMap.put("LOCK_EXP_TIME_", "java.sql.Timestamp");
+//		columnClassMap.put("LOCK_OWNER_", "java.lang.String");
+//		columnClassMap.put("EXCLUSIVE_", "java.lang.Boolean");
+//		columnClassMap.put("EXECUTION_ID_", "java.lang.String");
+//		columnClassMap.put("PROCESS_INSTANCE_ID_", "java.lang.String");
+//		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+//		columnClassMap.put("RETRIES_", "java.lang.Integer");
+//		columnClassMap.put("EXCEPTION_STACK_ID_", "java.lang.String");
+//		columnClassMap.put("EXCEPTION_MSG_", "java.lang.String");
+//		columnClassMap.put("DUEDATE_", "java.sql.Timestamp");
+//		columnClassMap.put("REPEAT_", "java.lang.String");
+//		columnClassMap.put("HANDLER_TYPE_", "java.lang.String");
+//		columnClassMap.put("HANDLER_CFG_", "java.lang.String");
+//		columnClassMap.put("ID_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("TYPE_", "java.lang.String");
+//		columnClassMap.put("LOCK_EXP_TIME_", "java.sql.Timestamp");
+//		columnClassMap.put("LOCK_OWNER_", "java.lang.String");
+//		columnClassMap.put("EXECUTION_ID_", "java.lang.String");
+//		columnClassMap.put("PROCESS_INSTANCE_ID_", "java.lang.String");
+//		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+//		columnClassMap.put("RETRIES_", "java.lang.Integer");
+//		columnClassMap.put("EXCEPTION_STACK_ID_", "java.lang.String");
+//		columnClassMap.put("EXCEPTION_MSG_", "java.lang.String");
+//		columnClassMap.put("DUEDATE_", "java.sql.Timestamp");
+//		columnClassMap.put("REPEAT_", "java.lang.String");
+//		columnClassMap.put("HANDLER_TYPE_", "java.lang.String");
+//		columnClassMap.put("HANDLER_CFG_", "java.lang.String");
+//		columnClassMap.put("ID_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("CATEGORY_", "java.lang.String");
+//		columnClassMap.put("NAME_", "java.lang.String");
+//		columnClassMap.put("KEY_", "java.lang.String");
+//		columnClassMap.put("VERSION_", "java.lang.Integer");
+//		columnClassMap.put("DEPLOYMENT_ID_", "java.lang.String");
+//		columnClassMap.put("RESOURCE_NAME_", "java.lang.String");
+//		columnClassMap.put("DGRM_RESOURCE_NAME_", "java.lang.String");
+//		columnClassMap.put("DESCRIPTION_", "java.lang.String");
+//		columnClassMap.put("HAS_START_FORM_KEY_", "java.lang.Boolean");
+//		columnClassMap.put("SUSPENSION_STATE_", "java.lang.Integer");
+//		columnClassMap.put("ID_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("TYPE_", "java.lang.String");
+//		columnClassMap.put("LOCK_EXP_TIME_", "java.sql.Timestamp");
+//		columnClassMap.put("LOCK_OWNER_", "java.lang.String");
+//		columnClassMap.put("EXCLUSIVE_", "java.lang.Boolean");
+//		columnClassMap.put("EXECUTION_ID_", "java.lang.String");
+//		columnClassMap.put("PROCESS_INSTANCE_ID_", "java.lang.String");
+//		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+//		columnClassMap.put("RETRIES_", "java.lang.Integer");
+//		columnClassMap.put("EXCEPTION_STACK_ID_", "java.lang.String");
+//		columnClassMap.put("EXCEPTION_MSG_", "java.lang.String");
+//		columnClassMap.put("DUEDATE_", "java.sql.Timestamp");
+//		columnClassMap.put("REPEAT_", "java.lang.String");
+//		columnClassMap.put("HANDLER_TYPE_", "java.lang.String");
+//		columnClassMap.put("HANDLER_CFG_", "java.lang.String");
+//		columnClassMap.put("ID_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("CATEGORY_", "java.lang.String");
+//		columnClassMap.put("NAME_", "java.lang.String");
+//		columnClassMap.put("KEY_", "java.lang.String");
+//		columnClassMap.put("VERSION_", "java.lang.Integer");
+//		columnClassMap.put("DEPLOYMENT_ID_", "java.lang.String");
+//		columnClassMap.put("RESOURCE_NAME_", "java.lang.String");
+//		columnClassMap.put("DGRM_RESOURCE_NAME_", "java.lang.String");
+//		columnClassMap.put("DESCRIPTION_", "java.lang.String");
+//		columnClassMap.put("HAS_START_FORM_KEY_", "java.lang.Boolean");
+//		columnClassMap.put("SUSPENSION_STATE_", "java.lang.Integer");
+//		columnClassMap.put("ID_", "java.lang.String");
+//		columnClassMap.put("REV_", "java.lang.Integer");
+//		columnClassMap.put("GROUP_ID_", "java.lang.String");
+//		columnClassMap.put("TYPE_", "java.lang.String");
+//		columnClassMap.put("USER_ID_", "java.lang.String");
+//		columnClassMap.put("TASK_ID_", "java.lang.String");
+//		columnClassMap.put("PROC_INST_ID_", "java.lang.String");
+//		columnClassMap.put("PROC_DEF_ID_", "java.lang.String");
+//		columnClassMap.put("DEPLOY_TIME_", "java.sql.Timestamp");
+//		columnClassMap.put("BUSINESS_KEY_", "java.lang.String");
+//		columnClassMap.put("PARENT_ID_", "java.lang.String");
+//		columnClassMap.put("SUPER_EXEC_", "java.lang.String");
+//		columnClassMap.put("ACT_ID_", "java.lang.String");
+//		columnClassMap.put("IS_ACTIVE_", "java.lang.Boolean");
+//		columnClassMap.put("IS_CONCURRENT_", "java.lang.Boolean");
+//		columnClassMap.put("IS_SCOPE_", "java.lang.Boolean");
+//		columnClassMap.put("IS_EVENT_SCOPE_", "java.lang.Boolean");
+//		columnClassMap.put("SUSPENSION_STATE_", "java.lang.Integer");
+//		columnClassMap.put("CACHED_ENT_STATE_", "java.lang.Integer");
+//		columnClassMap.put("BYTEARRAY_ID_", "java.lang.String");
+//		columnClassMap.put("DOUBLE_", "java.lang.Double");
+//		columnClassMap.put("LONG_", "java.lang.Long");
+//		columnClassMap.put("TEXT_", "java.lang.String");
+//		columnClassMap.put("TEXT2_", "java.lang.String");
+//	}
+
+}
