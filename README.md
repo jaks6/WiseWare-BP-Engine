@@ -12,10 +12,11 @@ This is a very experimental project, several modules have been removed or modifi
 -----------------------
 # What has been changed to adapt Activiti to Android? #
 
-The following modules have been adapted
-* **XML Parsing**: instead of javax.xml.stream.XMLStreamReader; and javax.xml.stream.XMLStreamWriter;, using org.xmlpull.v1.XmlPullParser and org.xmlpull.v1.XmlSerializer
-* using **com.googlecode.openbeans** instead of **java.beans**
-* SQLDroid is used persistence
+The following modules have been adapted:
+
+* **XML Parsing:** instead of XMLStreamReader and XMLStreamWriter from javax.xml.stream, using XmlPullParser and XmlSerializer from org.xmlpull.v1.
+* **Java Beans:** using **com.googlecode.openbeans** instead of **java.beans**
+* **SQLDroid** SQLDroid used for persistence
 * and more
 
 
