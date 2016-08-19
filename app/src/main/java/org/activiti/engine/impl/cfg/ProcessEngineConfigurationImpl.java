@@ -226,8 +226,6 @@ import org.activiti.engine.parse.BpmnParseHandler;
 import org.activiti.validation.ProcessValidator;
 import org.activiti.validation.ProcessValidatorFactory;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.ibatis.builder.xml.XMLConfigBuilder;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -241,6 +239,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ee.ut.cs.mc.and.activiti521.custom.ibatis.NonValidatingXMLConfigBuilder;
+import ee.ut.cs.mc.and.activiti521.custom.ibatis.NonValidatingXMLMapperBuilder;
 
 
 /**
@@ -918,7 +919,10 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   }
 
 	protected Configuration initMybatisConfiguration(Environment environment, Reader reader, Properties properties) {
-	  XMLConfigBuilder parser = new XMLConfigBuilder(reader,"", properties);
+//	  XMLConfigBuilder parser = new XMLConfigBuilder(reader,"", properties);
+      //TODO android doesnt support validating
+	  NonValidatingXMLConfigBuilder parser = new NonValidatingXMLConfigBuilder(reader,"", properties);
+
 	  Configuration configuration = parser.getConfiguration();
 	  configuration.setEnvironment(environment);
 	  
@@ -941,7 +945,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 	  }
   }
 	
-	protected Configuration parseMybatisConfiguration(Configuration configuration, XMLConfigBuilder parser) {
+	protected Configuration parseMybatisConfiguration(Configuration configuration, NonValidatingXMLConfigBuilder parser) {
 	  return parseCustomMybatisXMLMappers(parser.parse());
   }
 	
@@ -949,7 +953,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 	  if (getCustomMybatisXMLMappers() != null)
     // see XMLConfigBuilder.mapperElement()
     for(String resource: getCustomMybatisXMLMappers()){
-      XMLMapperBuilder mapperParser = new XMLMapperBuilder(getResourceAsStream(resource), 
+//      XMLMapperBuilder mapperParser = new XMLMapperBuilder(getResourceAsStream(resource),
+//          configuration, resource, configuration.getSqlFragments());
+      NonValidatingXMLMapperBuilder mapperParser = new NonValidatingXMLMapperBuilder(getResourceAsStream(resource),
           configuration, resource, configuration.getSqlFragments());
       mapperParser.parse();
     }

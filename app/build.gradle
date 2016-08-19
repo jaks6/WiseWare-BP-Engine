@@ -34,20 +34,16 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
     compile 'joda-time:joda-time:2.1'
-    //compile files('libs/commons-lang-3.jar')
     compile files('libs/hibernate-entitymanager-3.6.0.Final.jar')
     compile files('libs/hibernate-jpa-2.0-api-1.0.0.Final.jar')
     compile files('libs/java-uuid-generator-3.1.0.jar')
-//    compile files('libs/mockito-all-1.4.jar')
     compile files('libs/openbeans-1.0.jar')
     compile files('libs/xerces-for-android.jar')
 
-    // https://mvnrepository.com/artifact/de.psdev.slf4j-android-logger/slf4j-android-logger
-//    compile group: 'de.psdev.slf4j-android-logger', name: 'slf4j-android-logger', version: '1.0.5'
-// https://mvnrepository.com/artifact/org.slf4j/slf4j-android
+    // https://mvnrepository.com/artifact/org.mybatis/mybatis
+    compile group: 'org.mybatis', name: 'mybatis', version: '3.2.8'
+
     compile group: 'org.slf4j', name: 'slf4j-android', version: '1.7.21'
-
-
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
@@ -60,7 +56,7 @@ dependencies {
     compile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 
     // https://mvnrepository.com/artifact/cglib/cglib-nodep
-    compile group: 'cglib', name: 'cglib-nodep', version: '3.2.0'
+//    compile group: 'cglib', name: 'cglib-nodep', version: '3.2.0'
 
 
     // https://mvnrepository.com/artifact/org.mybatis/mybatis
