@@ -9,7 +9,7 @@ import android.util.Log;
 
 /** Background-running, starts the Activiti Engine on a new Thread when the service is started */
 public class ActivitiService extends Service {
-    private static final String TAG = EngineThread.class.getName();
+    private static final String TAG = ActivitiService.class.getName();
 
     EngineThread engineThread;
     // Binder given to clients
