@@ -31,6 +31,6 @@ public class TimeDateParser extends BaseChildElementParser {
     if (parentElement instanceof TimerEventDefinition == false) return;
     
     TimerEventDefinition eventDefinition = (TimerEventDefinition) parentElement;
-    eventDefinition.setTimeDate(xtr.getText());
+    eventDefinition.setTimeDate(xtr.nextText());
   }
 }

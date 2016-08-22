@@ -31,6 +31,7 @@ public class TimeDurationParser extends BaseChildElementParser {
     if (parentElement instanceof TimerEventDefinition == false) return;
     
     TimerEventDefinition eventDefinition = (TimerEventDefinition) parentElement;
-    eventDefinition.setTimeDuration(xtr.getText());
+    eventDefinition.setTimeDuration(xtr.nextText());
+
   }
 }

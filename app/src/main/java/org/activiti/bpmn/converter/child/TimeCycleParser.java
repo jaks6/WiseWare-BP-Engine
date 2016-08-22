@@ -36,6 +36,6 @@ public class TimeCycleParser extends BaseChildElementParser {
     if (StringUtils.isNotEmpty(xtr.getAttributeValue(ACTIVITI_EXTENSIONS_NAMESPACE, ATTRIBUTE_END_DATE))) {
       eventDefinition.setEndDate(xtr.getAttributeValue(ACTIVITI_EXTENSIONS_NAMESPACE, ATTRIBUTE_END_DATE));
     }
-    eventDefinition.setTimeCycle(xtr.getText());
+    eventDefinition.setTimeCycle(xtr.nextText());
   }
 }
