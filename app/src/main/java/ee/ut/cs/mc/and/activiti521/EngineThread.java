@@ -19,6 +19,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import ee.ut.cs.mc.and.activiti521.migration.MigrationListener;
+import ee.ut.cs.mc.and.activiti521.migration.Migrator;
+
 /**
  * Created by Jakob on 16.08.2016.
  */
@@ -40,6 +43,8 @@ public class EngineThread extends HandlerThread {
     private RepositoryService repositoryService;
     private RuntimeService runtimeService;
 
+    private Migrator migrator;
+
     @Override
     public synchronized void start() {
         super.start();
@@ -57,6 +62,8 @@ public class EngineThread extends HandlerThread {
                 }
             }
         };
+
+
     }
 
     /** Creates the thread and runs it, also starting the process engine */
@@ -69,6 +76,9 @@ public class EngineThread extends HandlerThread {
             @Override
             public void run() {
                 startEngine();
+                migrator = new Migrator();
+                deployProcess();
+
             }
         });
     }
@@ -87,12 +97,15 @@ public class EngineThread extends HandlerThread {
                 .setJdbcUrl(url)
                 .setCreateDiagramOnDeploy(false)
 //	      		  .setHistory(HistoryLevel.NONE.getKey())
-                .setJobExecutorActivate(false) //Job executor true throws SQLDroid "not implemented" errors
+                .setJobExecutorActivate(true) //Job executor true throws SQLDroid "not implemented" errors
                 .buildProcessEngine();
         Log.i(TAG, "Process Engine built");
 
         repositoryService = processEngine.getRepositoryService();
         runtimeService = processEngine.getRuntimeService();
+
+        //add event listener
+       runtimeService.addEventListener(new MigrationListener(mHandler));
 
     }
 
@@ -109,7 +122,7 @@ public class EngineThread extends HandlerThread {
         Log.i(TAG, "No of deployments=" + repositoryService.createProcessDefinitionQuery().list().size());
         Log.i(TAG, "About to create deployment.." + " Thread ID=" + Thread.currentThread().getId());
         repositoryService.createDeployment()
-                .addClasspathResource("juneprocess.bpmn")
+                .addClasspathResource("ActivitiTodoProcess.bpmn")
                 .deploy();
 
         Log.i(TAG, "Process Deployed!");

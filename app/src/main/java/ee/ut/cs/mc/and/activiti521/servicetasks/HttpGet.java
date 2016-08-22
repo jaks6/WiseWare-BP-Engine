@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.activiti.engine.delegate.DelegateExecution;
+import org.activiti.engine.delegate.Expression;
 import org.activiti.engine.delegate.JavaDelegate;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import okhttp3.Response;
  */
 public class HttpGet implements JavaDelegate {
 
-    public static final String URL = "http://jsonplaceholder.typicode.com/users/1";
+    private Expression URL; // this should be set via Field Injection in the process instance
     private static final String TAG = HttpGet.class.getName();
     OkHttpClient client = new OkHttpClient();
 
@@ -26,49 +27,23 @@ public class HttpGet implements JavaDelegate {
                 .url(url)
                 .build();
 
-
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
 
 
+
     @Override
     public void execute(DelegateExecution execution) {
         try {
-            Log.i(TAG, "Sleeping before making request...");
-            Thread.sleep(5000);
             Log.i(TAG, "Making request..");
-            Log.i(TAG, run(URL));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i(TAG, run((String) URL.getValue(execution)));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-    private class HttpGetTask extends AsyncTask<String, String, String> {
-        @Override
-        protected String doInBackground(String... url) {
-            String responseString = null;
-            try {
-                Log.i(TAG, "Sleeping before making request...");
-                Thread.sleep(5000);
-                Log.i(TAG, "Making request");
-                responseString = run(url[0]);
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-                return e.getMessage();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Log.i(TAG, "Request result = " + result);
-        }
+    public void setURL(Expression URL) {
+        this.URL = URL;
     }
 }
