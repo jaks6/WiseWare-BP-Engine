@@ -3,22 +3,22 @@
   <process id="myProcess" name="My process" isExecutable="true">
     <startEvent id="startevent1" name="Start"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
-    <serviceTask id="servicetask1" name="Get Todo 1" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
+    <serviceTask id="servicetask1" name="Get Todo 1" activiti:async="true" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
       <extensionElements>
         <activiti:field name="URL" stringValue="https://jsonplaceholder.typicode.com/todos/1" />
       </extensionElements>
     </serviceTask>
-    <serviceTask id="servicetask2" name="Get Todo 2" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
+    <serviceTask id="servicetask2" name="Get Todo 2" activiti:async="true" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
       <extensionElements>
         <activiti:field name="URL" stringValue="https://jsonplaceholder.typicode.com/todos/2" />
       </extensionElements>
     </serviceTask>
-    <serviceTask id="servicetask3" name="Get Todo 3" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
+    <serviceTask id="servicetask3" name="Get Todo 3" activiti:async="true" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
       <extensionElements>
         <activiti:field name="URL" stringValue="https://jsonplaceholder.typicode.com/todos/3" />
       </extensionElements>
     </serviceTask>
-    <serviceTask id="servicetask4" name="Get Todo 4" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
+    <serviceTask id="servicetask4" name="Get Todo 4" activiti:async="true" activiti:class="ee.ut.cs.mc.and.activiti521.servicetasks.HttpGet">
       <extensionElements>
         <activiti:field name="URL" stringValue="https://jsonplaceholder.typicode.com/todos/4" />
       </extensionElements>

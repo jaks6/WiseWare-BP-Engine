@@ -1,5 +1,6 @@
 package ee.ut.cs.mc.and.activiti521;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -12,7 +13,6 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -132,7 +132,20 @@ public class EngineThread extends HandlerThread {
 
     public void connectToDb(){
         try {
-            dbFile = File.createTempFile("main.sqlite", null);
+//            dbFile = File.createTempFile("main.sqlite", null);
+
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+                Log.e(TAG, "No SD Card");
+                //handle case of no SDCARD present
+            } else {
+                String dir = Environment.getExternalStorageDirectory()+File.separator+"myDirectory";
+                //create folder
+                File folder = new File(dir); //folder name
+                folder.mkdirs();
+
+                //create file
+                dbFile = new File(dir, "main.sqlite");
+            }
 
         url = "jdbc:sqlite:/" + dbFile.getPath();
 
@@ -143,8 +156,6 @@ public class EngineThread extends HandlerThread {
             }
             con = DriverManager.getConnection(url);
 
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
