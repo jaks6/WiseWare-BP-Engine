@@ -1,7 +1,7 @@
 package ee.ut.cs.mc.and.activiti521;
 
+import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +14,6 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-
-    boolean mBound = false;
-    private Handler mEngineHandler;
 
     private EngineThreadCommunicator engineCommunicator;
 
@@ -32,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         serviceSwitch = (Switch) findViewById(R.id.switch1);
 
         serviceSwitch.setOnCheckedChangeListener(new ServiceSwitchChangeListener(this));
-
         engineCommunicator = new EngineThreadCommunicator(this);
     }
 
@@ -54,12 +50,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
             Log.d(TAG, "switch state change, isChecked=" + isChecked);
-            Intent i = new Intent(this.context, ActivitiService.class);
             if (isChecked){
-                startService(i);
-                //TODO Bind to the service as soon as the service is launched
+                engineCommunicator.startService();
             } else {
-                stopService(i);
+                engineCommunicator.stopService();
             }
         }
     }

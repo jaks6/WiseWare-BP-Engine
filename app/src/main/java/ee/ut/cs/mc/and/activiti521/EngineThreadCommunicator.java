@@ -15,9 +15,10 @@ import static android.R.id.message;
 /**
  * Created by Jakob on 21.08.2016.
  *
+ * This class has two responsibilitites:
+ * Starts/Stops the service which launches the Engine Thread.
  * Binds to the Engine Thread and mediates messages to it
  */
-
 public class EngineThreadCommunicator {
 
     private static final String TAG = EngineThreadCommunicator.class.getName();
@@ -25,17 +26,13 @@ public class EngineThreadCommunicator {
     private Context mContext;
     private boolean mBound = false;
 
-
     public EngineThreadCommunicator(Context mContext) {
         this.mContext = mContext;
     }
 
-
-
     public boolean sendMessage(int msg) {
         if (! mBound) {
-            Toast.makeText(mContext, "Not bound to service. attempting to bind..", Toast.LENGTH_SHORT).show();
-            bindToService();
+            Toast.makeText(mContext, "Not bound to service. is the service running?", Toast.LENGTH_SHORT).show();
             return false;
         } else {
             sendMessageToHandler(msg);
@@ -52,10 +49,30 @@ public class EngineThreadCommunicator {
         ).sendToTarget();
     }
 
+
+
+    /** Starts service and binds to it */
+    public void startService(){
+        Intent i = new Intent(mContext, ActivitiService.class);
+        mContext.startService(i);
+        bindToService();
+    }
+
+    public void stopService(){
+        Intent i = new Intent(mContext, ActivitiService.class);
+        mContext.stopService(i);
+    }
+
+
+    /** Binds to service with flag 0, meaning the bindService call does not try to start the
+     *  service if not already running! The service must be previously started
+     *  explicitly using startService()
+     */
     public void bindToService(){
         Intent intent = new Intent(mContext, ActivitiService.class);
-        mContext.bindService(intent, mConnection, Context.BIND_ABOVE_CLIENT);
+        mContext.bindService(intent, mConnection, 0);
     }
+
 
     public void unbindFromService(){
         mContext.unbindService(mConnection);
