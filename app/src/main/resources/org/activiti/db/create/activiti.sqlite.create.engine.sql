@@ -133,7 +133,7 @@ create table ACT_RU_IDENTITYLINK (
     TYPE_ TEXT,
     USER_ID_ TEXT,
     TASK_ID_ TEXT,
-    PROC_INST_ID_ TEXT null,
+    PROC_INST_ID_ TEXT,
     PROC_DEF_ID_ TEXT
 );
 

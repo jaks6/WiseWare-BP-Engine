@@ -80,7 +80,7 @@ public class EngineThreadCommunicator {
     };
 
     public void close() {
-        if (mConnection != null) {
+        if (mBound) {
             unbindFromService();
         }
     }
