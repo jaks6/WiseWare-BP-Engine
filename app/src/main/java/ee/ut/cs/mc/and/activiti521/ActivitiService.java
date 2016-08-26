@@ -7,6 +7,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.runtime.ProcessInstance;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /** Background-running, starts the Activiti Engine on a new Thread when the service is started */
 public class ActivitiService extends Service {
     private static final String TAG = ActivitiService.class.getName();
@@ -37,5 +44,26 @@ public class ActivitiService extends Service {
         public Handler getEngineThreadHandler(){
             return engineThread.getHandler();
         }
+
+        public EngineStatusDescriber getEngineStats(){
+            return new EngineStatusDescriber(engineThread.getProcessEngine());
+        }
     }
+
+    class EngineStatusDescriber{
+        public final List<ProcessInstance> runningInstances;
+        public final List<Deployment> deployedInstances;
+
+        public EngineStatusDescriber(ProcessEngine engine) {
+            if (engine != null){
+                this.runningInstances = engine.getRuntimeService().createProcessInstanceQuery().list();
+                this.deployedInstances = engine.getRepositoryService().createDeploymentQuery().list();
+            } else {
+                this.runningInstances = new ArrayList<>();
+                this.deployedInstances  = new ArrayList<>();
+            }
+        }
+
+    }
+
 }

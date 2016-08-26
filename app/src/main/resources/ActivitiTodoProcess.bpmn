@@ -30,7 +30,7 @@
     <sequenceFlow id="flow5" sourceRef="servicetask4" targetRef="endevent1"></sequenceFlow>
     <intermediateCatchEvent id="timerintermediatecatchevent1" name="Timer5S">
       <timerEventDefinition>
-        <timeDuration>PT5S</timeDuration>
+        <timeDuration>PT2S</timeDuration>
       </timerEventDefinition>
     </intermediateCatchEvent>
     <sequenceFlow id="flow6" sourceRef="timerintermediatecatchevent1" targetRef="servicetask1"></sequenceFlow>

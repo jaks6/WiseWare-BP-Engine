@@ -10,15 +10,14 @@
     <TextView
         android:text=""
         android:layout_width="352dp"
-        android:layout_height="46dp"
+        android:layout_height="198dp"
         android:id="@+id/textView_serviceStatus"
         android:layout_marginEnd="16dp"
         app:layout_constraintRight_toRightOf="@+id/activity_main"
         tools:layout_constraintTop_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/switch1"
         app:layout_constraintTop_toTopOf="@+id/activity_main"
-        app:layout_constraintVertical_bias="0.060000002" />
+        app:layout_constraintVertical_bias="0.060000002"
+        app:layout_constraintBottom_toTopOf="@+id/switch1" />
 
     <Switch
         android:text="Service Status"
@@ -34,8 +33,9 @@
         app:layout_constraintLeft_toLeftOf="@+id/activity_main"
         app:layout_constraintTop_toTopOf="@+id/activity_main"
         app:layout_constraintBottom_toBottomOf="@+id/activity_main"
-        app:layout_constraintVertical_bias="0.13"
-        android:checked="false" />
+        app:layout_constraintVertical_bias="0.45"
+        android:checked="false"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <Button
         android:text="Deploy Process"

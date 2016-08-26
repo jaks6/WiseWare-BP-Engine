@@ -55,7 +55,7 @@ public class AcquireJobsRunnableImpl implements AcquireJobsRunnable {
       try {
         log.info("{} attempting to acquire job", jobExecutor.getName());
         AcquiredJobs acquiredJobs = commandExecutor.execute(jobExecutor.getAcquireJobsCmd());
-        
+        log.info("{} acquire result===="+ acquiredJobs.size());
         for (List<String> jobIds : acquiredJobs.getJobIdBatches()) {
           jobExecutor.executeJobs(jobIds);
         }

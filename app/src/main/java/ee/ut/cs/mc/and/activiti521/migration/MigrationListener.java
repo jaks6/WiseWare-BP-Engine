@@ -3,13 +3,12 @@ package ee.ut.cs.mc.and.activiti521.migration;
 import android.os.Handler;
 import android.util.Log;
 
-import org.activiti.engine.ManagementService;
-import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.event.ActivitiActivityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
+
+import ee.ut.cs.mc.and.activiti521.EngineThread;
 
 /**
  * Created by Jakob on 22.08.2016.
@@ -18,7 +17,7 @@ import org.activiti.engine.delegate.event.ActivitiEventListener;
 public class MigrationListener implements ActivitiEventListener {
     private static final String TAG = MigrationListener.class.getName();
     private Handler engineHandler;
-    boolean migrationRequested = true;
+    boolean migrationRequested = false;
 
     //temporary counter which is used to trigger migration
     int counter = 0;
@@ -54,6 +53,7 @@ public class MigrationListener implements ActivitiEventListener {
             //TODO check if migration really possible/feasible at this point in execution
             Log.i(TAG, "MIGRATION!");
             haltProcessExecution(event);
+            counter++;
             createMigration(event);
         } else {
             counter++;
@@ -61,12 +61,8 @@ public class MigrationListener implements ActivitiEventListener {
     }
 
     private void createMigration(ActivitiActivityEvent event) {
-        //TODO
-        RuntimeService runtimeService = event.getEngineServices().getRuntimeService();
-        RepositoryService repositoryService = event.getEngineServices().getRepositoryService();
-        ManagementService managementService = event.getEngineServices().getManagementService();
-        TaskService taskService = event.getEngineServices().getTaskService();
-
+        engineHandler.obtainMessage(0, EngineThread.ENGINE_CAPTURE_INSTANCE_STATE, 0, event.getProcessInstanceId())
+                .sendToTarget();
     }
 
     private void haltProcessExecution(ActivitiActivityEvent event) {

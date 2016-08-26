@@ -22,8 +22,10 @@ import static android.R.id.message;
 public class EngineThreadCommunicator {
 
     private static final String TAG = EngineThreadCommunicator.class.getName();
+    private Handler mActivityHandler;
     private Handler mEngineHandler;
     private Context mContext;
+    ActivitiService.ActivitiServiceBinder binder;
     private boolean mBound = false;
 
     public EngineThreadCommunicator(Context mContext) {
@@ -84,7 +86,7 @@ public class EngineThreadCommunicator {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ActivitiService.ActivitiServiceBinder binder = (ActivitiService.ActivitiServiceBinder) service;
+            binder = (ActivitiService.ActivitiServiceBinder) service;
             mEngineHandler = binder.getEngineThreadHandler();
             mBound = true;
 
@@ -100,5 +102,19 @@ public class EngineThreadCommunicator {
         if (mBound) {
             unbindFromService();
         }
+    }
+
+    ActivitiService.EngineStatusDescriber getStatusUpdate(){
+        if (mBound){
+            return binder.getEngineStats();
+        }
+        else {
+            Log.e(TAG, "not bound to service!");
+            return null;
+        }
+    }
+
+    public boolean isBound() {
+        return mBound;
     }
 }
