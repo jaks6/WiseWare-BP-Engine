@@ -30,6 +30,6 @@ public class ConditionExpressionParser extends BaseChildElementParser {
   public void parseChildElement(XmlPullParser xtr, BaseElement parentElement, BpmnModel model) throws Exception {
     if (parentElement instanceof SequenceFlow == false) return;
     
-    ((SequenceFlow) parentElement).setConditionExpression(xtr.getText().trim());
+    ((SequenceFlow) parentElement).setConditionExpression(xtr.nextText().trim());
   }
 }
