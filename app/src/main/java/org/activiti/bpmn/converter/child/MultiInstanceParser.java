@@ -47,10 +47,10 @@ public class MultiInstanceParser extends BaseChildElementParser {
       while (readyWithMultiInstance == false && eventType != XmlPullParser.END_DOCUMENT) {
 //        xtr.next();
         if (eventType == XmlPullParser.START_TAG && ELEMENT_MULTIINSTANCE_CARDINALITY.equalsIgnoreCase(xtr.getName())) {
-          multiInstanceDef.setLoopCardinality(xtr.getText());
+          multiInstanceDef.setLoopCardinality(xtr.nextText());
 
         } else if (eventType == XmlPullParser.START_TAG && ELEMENT_MULTIINSTANCE_DATAINPUT.equalsIgnoreCase(xtr.getName())) {
-          multiInstanceDef.setInputDataItem(xtr.getText());
+          multiInstanceDef.setInputDataItem(xtr.nextText());
 
         } else if (eventType == XmlPullParser.START_TAG && ELEMENT_MULTIINSTANCE_DATAITEM.equalsIgnoreCase(xtr.getName())) {
           if (xtr.getAttributeValue(null, ATTRIBUTE_NAME) != null) {
@@ -58,7 +58,7 @@ public class MultiInstanceParser extends BaseChildElementParser {
           }
 
         } else if (eventType == XmlPullParser.START_TAG && ELEMENT_MULTIINSTANCE_CONDITION.equalsIgnoreCase(xtr.getName())) {
-          multiInstanceDef.setCompletionCondition(xtr.getText());
+          multiInstanceDef.setCompletionCondition(xtr.nextText());
 
         } else if (eventType == XmlPullParser.END_TAG && getElementName().equalsIgnoreCase(xtr.getName())) {
           readyWithMultiInstance = true;
