@@ -1,7 +1,6 @@
-package ee.ut.cs.mc.and.activiti521.migration;
+package ee.ut.cs.mc.and.activiti521.engine.migration;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

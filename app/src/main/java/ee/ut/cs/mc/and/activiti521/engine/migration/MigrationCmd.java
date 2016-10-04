@@ -1,8 +1,7 @@
-package ee.ut.cs.mc.and.activiti521.migration;
+package ee.ut.cs.mc.and.activiti521.engine.migration;
 
 import org.activiti.engine.impl.JobQueryImpl;
 import org.activiti.engine.impl.interceptor.CommandContext;
-import org.activiti.engine.runtime.Job;
 
 import java.util.List;
 

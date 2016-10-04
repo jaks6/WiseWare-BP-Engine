@@ -1,4 +1,4 @@
-package ee.ut.cs.mc.and.activiti521.migration;
+package ee.ut.cs.mc.and.activiti521.engine.migration;
 
 import org.activiti.engine.repository.ProcessDefinition;
 

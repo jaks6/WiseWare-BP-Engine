@@ -1,28 +1,26 @@
-package ee.ut.cs.mc.and.activiti521.migration;
+package ee.ut.cs.mc.and.activiti521.engine.migration;
 
 import android.os.Environment;
 import android.util.JsonReader;
 import android.util.JsonToken;
-import android.util.JsonWriter;
 import android.util.Log;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ee.ut.cs.mc.and.activiti521.ExperimentUtils.experimentLog;
 
 /**
  * Created by Jakob on 24.08.2016.
@@ -59,9 +57,10 @@ public class JsonDeserializer {
     }
 
     private void readTable() throws IOException {
+        experimentLog("Reading table");
         reader.beginObject();
         String tableName = reader.nextName();
-
+        experimentLog(tableName);
         reader.beginArray();
         //Columns
         List<String> columnNames = readColumnNames();
@@ -86,7 +85,6 @@ public class JsonDeserializer {
     }
 
     private void insertRowToDb(String tableName, List<String> vals)  {
-//        String joinedValues = "'" + StringUtils.join(vals, "', '") + "'";
         try {
             String sql = "INSERT INTO "+tableName+" VALUES (?"+StringUtils.repeat( ", ?", vals.size()-1) +")";
             PreparedStatement statement = dbConnection.prepareStatement(sql);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -8,34 +8,18 @@
     tools:context="ee.ut.cs.mc.and.activiti521.MainActivity">
 
     <TextView
-        android:text=""
-        android:layout_width="352dp"
-        android:layout_height="198dp"
-        android:id="@+id/textView_serviceStatus"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        tools:layout_constraintTop_creator="1"
-        app:layout_constraintTop_toTopOf="@+id/activity_main"
-        app:layout_constraintVertical_bias="0.060000002"
-        app:layout_constraintBottom_toTopOf="@+id/switch1" />
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/textView_serviceStatus"/>
 
     <Switch
         android:text="Service Status"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:id="@+id/switch1"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintTop_toTopOf="@+id/activity_main"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main"
-        app:layout_constraintVertical_bias="0.45"
-        android:checked="false"
-        app:layout_constraintHorizontal_bias="0.0" />
+
+        android:id="@+id/switch2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button"
+        android:layout_toEndOf="@+id/button" />
 
     <Button
         android:text="Deploy Process"
@@ -43,12 +27,8 @@
         android:layout_height="wrap_content"
         android:onClick="deployButtonClicked"
         android:id="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/switch1"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="@+id/activity_main" />
+        android:layout_below="@+id/textView_serviceStatus"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:text="Run Process"
@@ -56,11 +36,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button2"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        app:layout_constraintTop_toBottomOf="@+id/switch1"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main" />
+        android:layout_below="@+id/textView_serviceStatus"
+        android:layout_alignParentEnd="true" />
 
-</android.support.constraint.ConstraintLayout>
+    <fragment
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:name="ee.ut.cs.mc.and.activiti521.DeploymentsFragment"
+        android:id="@+id/fragmentDeployments"
+        android:layout_centerHorizontal="true"
+        tools:layout="@layout/deployments_fragment"
+        android:layout_below="@+id/switch2"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

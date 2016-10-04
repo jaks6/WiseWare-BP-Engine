@@ -45,7 +45,6 @@ public class AcquireJobsRunnableImpl implements AcquireJobsRunnable {
 
   public synchronized void run() {
     log.info("{} starting to acquire jobs", jobExecutor.getName());
-    Log.i(TAG, "{} starting to acquire jobs" + jobExecutor.getName() );
     final CommandExecutor commandExecutor = jobExecutor.getCommandExecutor();
 
     while (!isInterrupted) {

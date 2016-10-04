@@ -1,4 +1,4 @@
-package ee.ut.cs.mc.and.activiti521.migration;
+package ee.ut.cs.mc.and.activiti521.engine.migration;
 
 import android.util.Log;
 
@@ -9,7 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Map;
+
+import static ee.ut.cs.mc.and.activiti521.ExperimentUtils.experimentLog;
 
 /**
  * Created by Jakob on 22.08.2016.
@@ -26,6 +27,7 @@ public class Migrator {
     }
 
     public void loadStateFromFileToDb() {
+        experimentLog("Starting loadStateFromFileToDb");
         JsonDeserializer deserializer = null;
         try {
             deserializer = new JsonDeserializer(mConnection, "migration01.json");
@@ -39,18 +41,19 @@ public class Migrator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        experimentLog("Finished loadStateFromFileToDb");
     }
 
-    public void captureDbStateToFile() throws SQLException {
+    public void captureDbStateToFile(String procInstId) throws SQLException {
+        experimentLog("Starting DB state capture");
         Statement stmt = null;
-        String query = null;
         JsonSerializer migrationSerializer = null;
 
         try {
             migrationSerializer = new JsonSerializer("migration01.json");
 
             for ( String table : SqlCommandUtil.tables) {
-                String procInstId = "4";
+                experimentLog("Starting work on DB table: "+table);
                 stmt = mConnection.createStatement();
                 ResultSet rs = stmt.executeQuery(
                         SqlCommandUtil.getQueryForProcessInstance(table, procInstId));
@@ -63,8 +66,10 @@ public class Migrator {
             e.printStackTrace();
         } finally {
             if (stmt != null) {
-                stmt.close();
+                stmt.close(); //TODO should this be  moved into the for loop above?
             }
         }
+
+        experimentLog("Finished DB state capture");
     }
 }

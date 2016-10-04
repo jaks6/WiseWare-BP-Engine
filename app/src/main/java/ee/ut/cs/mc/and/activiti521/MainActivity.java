@@ -1,7 +1,6 @@
 package ee.ut.cs.mc.and.activiti521;
 
-import android.app.NotificationManager;
-import android.content.Context;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,25 +12,44 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import ee.ut.cs.mc.and.activiti521.engine.ActivitiService;
+import ee.ut.cs.mc.and.activiti521.engine.ActivitiServiceManager;
+import ee.ut.cs.mc.and.activiti521.engine.EngineStatusDescriber;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static final int MSG_PROCESS_INSTANCE_COUNT_UPDATE = 1;
 
     Handler mHandler;
-    private EngineThreadCommunicator engineCommunicator;
+
+    private ActivitiServiceManager activitiManager;
 
     Switch serviceSwitch;
     TextView statusTextView;
+    private DeploymentsFragment deploymentsFg;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Start Activiti Service, create client to interact with it
+        activitiManager = new ActivitiServiceManager(this);
+        activitiManager.startService();
         setContentView(R.layout.activity_main);
 
-        mHandler =  new Handler(Looper.getMainLooper()) {
+        FragmentManager fm = getFragmentManager();
+        deploymentsFg = (DeploymentsFragment) fm.findFragmentById(R.id.fragmentDeployments);
+//
+//        if (fm.findFragmentById(R.id.fragmentDeployments) == null) {
+//            DeploymentsFragment list = new DeploymentsFragment();
+//            fm.beginTransaction().add(R.id.fragmentDeployments, list).commit();
+//        }
+
+        mHandler = new Handler(Looper.getMainLooper()) {
             public void handleMessage(Message msg) {
-                switch (msg.what){
+                switch (msg.what) {
                     case MSG_PROCESS_INSTANCE_COUNT_UPDATE:
                         updateProcessInstanceCount(msg.arg1);
                         break;
@@ -41,26 +59,27 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        setUpEngineStatsDisplayer();
+
+        statusTextView = (TextView) findViewById(R.id.textView_serviceStatus);
+        serviceSwitch = (Switch) findViewById(R.id.switch2);
+
+    }
+
+    private void setUpEngineStatsDisplayer() {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (engineCommunicator.isBound()) {
-                    ActivitiService.EngineStatusDescriber stats = engineCommunicator.binder.getEngineStats();
-                    statusTextView.setText(String.format("Running instance count: %s\nDeployed instance count: %s",
+                if (activitiManager.isBound()) {
+                    EngineStatusDescriber stats = activitiManager.getEngineStatus();
+                    statusTextView.setText(String.format("Running instance count: %s\nProcess definition count: %s",
                             stats.runningInstances.size(),
-                            stats.deployedInstances.size()));
+                            stats.processDefinitions.size()));
+
                 }
-                mHandler.postDelayed(this, 1000);
+                mHandler.postDelayed(this, 3000);
             }
-
         }, 1000);
-
-        statusTextView = (TextView) findViewById(R.id.textView_serviceStatus);
-        serviceSwitch = (Switch) findViewById(R.id.switch1);
-
-
-        engineCommunicator = new EngineThreadCommunicator(this);
-        engineCommunicator.startService();
     }
 
     private void updateProcessInstanceCount(int runningInstanceCount) {
@@ -70,39 +89,41 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         serviceSwitch.setChecked(Util.isServiceRunning(this, ActivitiService.class));
-        serviceSwitch.setOnCheckedChangeListener(new ServiceSwitchChangeListener(this));
+        serviceSwitch.setOnCheckedChangeListener(new ServiceSwitchChangeListener());
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         serviceSwitch.setOnCheckedChangeListener(null);
-        engineCommunicator.close();
-        super.onStop();
+//        activitiManager.close();
+        super.onPause();
     }
 
-    private class ServiceSwitchChangeListener implements android.widget.CompoundButton.OnCheckedChangeListener{
-        private Context context;
-        ServiceSwitchChangeListener(Context ctx) {this.context = ctx;}
+
+    private class ServiceSwitchChangeListener implements android.widget.CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-            Log.d(TAG, "switch state change, isChecked=" + isChecked);
-            if (isChecked){
-                engineCommunicator.startService();
+            if (isChecked) {
+                activitiManager.startService();
             } else {
-                engineCommunicator.stopService();
+                activitiManager.stopService();
             }
         }
     }
 
-    public void deployButtonClicked(View v){
+    public void deployButtonClicked(View v) {
         Log.i(TAG, "Deploy button clicked.");
-        engineCommunicator.sendMessage(EngineThread.ENGINE_THREAD_MSG_DEPLOY_PROCESS);
-    }
-    public void runButtonClicked(View v){
-        Log.i(TAG, "Run button clicked.");
-        engineCommunicator.sendMessage(EngineThread.ENGINE_THREAD_MSG_RUN_PROCESS);
+        activitiManager.deployProcess(ExperimentUtils.PROCESS_RESOURCE_NAME_WISEWARE);
     }
 
+    public void runButtonClicked(View v) {
+        Log.i(TAG, "Run button clicked.");
+        activitiManager.startProcess(ExperimentUtils.PROCESS_KEY);
+    }
+
+    public ActivitiServiceManager getActivitiManager() {
+        return activitiManager;
+    }
 
 }

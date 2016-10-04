@@ -1,4 +1,4 @@
-package ee.ut.cs.mc.and.activiti521;
+package ee.ut.cs.mc.and.activiti521.engine;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,12 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.runtime.ProcessInstance;
-
-import java.util.ArrayList;
-import java.util.List;
+import ee.ut.cs.mc.and.activiti521.ExperimentUtils;
 
 /** Background-running, starts the Activiti Engine on a new Thread when the service is started */
 public class ActivitiService extends Service {
@@ -25,13 +20,15 @@ public class ActivitiService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Starting ActivitiService");
-        engineThread = new EngineThread();
+        if (engineThread == null)
+            engineThread = new EngineThread();
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "Stopping ActivitiService");
+        //TODO nice Thread killing
         super.onDestroy();
     }
 
@@ -41,29 +38,20 @@ public class ActivitiService extends Service {
     }
 
     public class ActivitiServiceBinder extends Binder {
-        public Handler getEngineThreadHandler(){
-            return engineThread.getHandler();
-        }
 
         public EngineStatusDescriber getEngineStats(){
             return new EngineStatusDescriber(engineThread.getProcessEngine());
         }
-    }
 
-    class EngineStatusDescriber{
-        public final List<ProcessInstance> runningInstances;
-        public final List<Deployment> deployedInstances;
-
-        public EngineStatusDescriber(ProcessEngine engine) {
-            if (engine != null){
-                this.runningInstances = engine.getRuntimeService().createProcessInstanceQuery().list();
-                this.deployedInstances = engine.getRepositoryService().createDeploymentQuery().list();
-            } else {
-                this.runningInstances = new ArrayList<>();
-                this.deployedInstances  = new ArrayList<>();
-            }
+        public void startProcess(String processId){
+            engineThread.getHandler().obtainMessage(EngineThreadHandler.ENGINE_THREAD_MSG_RUN_PROCESS).sendToTarget();
         }
 
+
+        public void deployProcess(String processKey){
+            engineThread.getHandler().obtainMessage(EngineThreadHandler.ENGINE_THREAD_MSG_DEPLOY_PROCESS).sendToTarget();
+        }
     }
+
 
 }

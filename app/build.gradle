@@ -27,12 +27,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha6'
-    compile 'junit:junit:4.12'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.squareup.okhttp3:okhttp:3.3.1'
-    compile 'joda-time:joda-time:2.1'
 
     compile files('libs/hibernate-entitymanager-3.6.0.Final.jar')
     compile files('libs/hibernate-jpa-2.0-api-1.0.0.Final.jar')
@@ -46,10 +40,18 @@ dependencies {
     compile group: 'org.mybatis', name: 'mybatis', version: '3.2.8'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
 
     // https://mvnrepository.com/artifact/org.mockito/mockito-all
     compile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha6'
+    compile 'junit:junit:4.12'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'joda-time:joda-time:2.1'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
 }

@@ -18,4 +18,7 @@ public class Util {
         }
         return false;
     }
+
+
+    public static final boolean PrintActivitiLogs = false;
 }
