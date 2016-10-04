@@ -3,7 +3,6 @@ package ee.ut.cs.mc.and.activiti521;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 
 import ee.ut.cs.mc.and.activiti521.engine.ActivitiServiceManager;
@@ -44,7 +42,7 @@ public class DeploymentAdapter extends ArrayAdapter<ProcessDefinition> {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Starting process: "+ getItem(position).getName(), Toast.LENGTH_LONG).show();
-                mActivitiManager.startProcess(getItem(position).getKey());
+                mActivitiManager.getService().startProcess(getItem(position).getKey());
             }
         });
 
@@ -66,6 +64,7 @@ public class DeploymentAdapter extends ArrayAdapter<ProcessDefinition> {
     private void setUpDynamicBehaviour() {
         mActivitiManager = new ActivitiServiceManager(getContext());
         mActivitiManager.startService();
+        mActivitiManager.bindToService();
 
 
         mHandler.postDelayed(new Runnable() {
@@ -73,9 +72,8 @@ public class DeploymentAdapter extends ArrayAdapter<ProcessDefinition> {
             public void run() {
                 if (mActivitiManager != null && mActivitiManager.isBound()){
                     clear();
-                    addAll(mActivitiManager.getEngineStatus().processDefinitions);
+                    addAll(mActivitiManager.getService().getEngineStatus().processDefinitions);
                     notifyDataSetChanged();
-
                 }
                 mHandler.postDelayed(this, 2500);
             }

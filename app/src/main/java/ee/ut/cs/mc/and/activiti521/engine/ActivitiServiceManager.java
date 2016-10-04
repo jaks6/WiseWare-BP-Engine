@@ -7,43 +7,42 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
+import ee.ut.cs.mc.and.activiti521.UiCallbackRunner;
+
 /**
- * Handles Service start/stop, binding to service, and implements interface
- * for interacting with the service through the binding.
+ * Handles Service start/stop, binding to service, provides pointer to service
+ * when bound.
  */
-public class ActivitiServiceManager implements EngineInterface {
+public class ActivitiServiceManager {
 
     private static final String TAG = ActivitiServiceManager.class.getName();
+
     /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceBinderConnection();
-    private ActivitiService.ActivitiServiceBinder binder;
+    private ServiceConnection mConnection = new ActivitiServiceConnection() {
+        @Override
+        protected void onActivitiServiceConnected(ActivitiService service) {
+            mService = service;
+            mBound = true;
+            Log.d(TAG, "Bound to service");
+        }
+
+        @Override
+        protected void onActivitiServiceDisconnected() {
+            mBound = false;
+            Log.d(TAG, "Unbound from service");
+        }
+    };
     private boolean mBound;
     private Context mContext;
+    private ActivitiService mService;
     public ActivitiServiceManager(Context mContext) {
         this.mContext = mContext;
     }
-
-    @Override
-    public void startProcess(String processKey) {
-        binder.startProcess(processKey);
-    }
-
-    @Override
-    public void deployProcess(String resourceName) {
-        binder.deployProcess(resourceName);
-    }
-
-    @Override
-    public EngineStatusDescriber getEngineStatus() {
-        return binder.getEngineStats();
-    }
-
 
     /** Starts service and binds to it */
     public void startService(){
         Intent i = new Intent(mContext, ActivitiService.class);
         mContext.startService(i);
-        bindToService();
     }
 
     public void stopService(){
@@ -56,7 +55,7 @@ public class ActivitiServiceManager implements EngineInterface {
      *  service if not already running! The service must be previously started
      *  explicitly using startService()
      */
-    private void bindToService(){
+    public void bindToService(){
         Intent intent = new Intent(mContext, ActivitiService.class);
         mContext.bindService(intent, mConnection, 0);
     }
@@ -64,27 +63,12 @@ public class ActivitiServiceManager implements EngineInterface {
         mContext.unbindService(mConnection);
     }
 
-    public ActivitiService.ActivitiServiceBinder getBinder() {
-        return binder;
-    }
-
     public boolean isBound() {
         return mBound;
     }
 
-    private final class ServiceBinderConnection implements ServiceConnection {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            binder = (ActivitiService.ActivitiServiceBinder) iBinder;
-            mBound = true;
-            Log.d(TAG, "Bound to service");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "Unbound from service");
-            mBound = false;
-        }
+    public ActivitiService getService() {
+        return mService;
     }
+
 }
