@@ -23,7 +23,7 @@ public class MigrationListener implements ActivitiEventListener {
     private Handler engineHandler;
 
     //temporary counter which is used to trigger migration
-    int counter = 0;
+    public static int counter = 0;
 
     public MigrationListener(Handler mHandler) {
         engineHandler = mHandler;
@@ -52,29 +52,32 @@ public class MigrationListener implements ActivitiEventListener {
     }
 
     private void handleActivityCompletedEvent(ActivitiActivityEvent event) {
-        if ( ExperimentUtils.AUTO_EMIGRATE && counter == ExperimentUtils.STEPS_BEFORE_EMIGRATION){
-            //TODO check if migration really possible/feasible at this point in execution
-            counter++;
-            experimentLog("Migration start");
-            haltProcessExecution(event);
-            createMigration(event);
+        if ( ExperimentUtils.AUTO_EMIGRATE && counter >= ExperimentUtils.STEPS_BEFORE_EMIGRATION){
+            if (ExperimentUtils.emigratingProcessInstanceList.contains(event.getProcessInstanceId())){
+                Log.w(TAG, "Already emigrating process instance, skipping new emigration request. BPID="+event.getProcessInstanceId());
+            } else {
+                ExperimentUtils.startingMigration(event);
+                haltProcessExecution(event);
+                //TODO check if migration really possible/feasible at this point in execution
+                counter++;
+                createMigration(event);
+            }
         } else {
             counter++;
         }
     }
 
+    private void haltProcessExecution(ActivitiActivityEvent event) {
+        experimentLog("Suspending Process Instance: "+ event.getProcessInstanceId());
+        event.getEngineServices().getRuntimeService().suspendProcessInstanceById(event.getProcessInstanceId());
+    }
 
 
     private void createMigration(ActivitiActivityEvent event) {
         experimentLog("Sending CAPTURE_INSTANCE_STATE msg");
-        engineHandler.obtainMessage(0, EngineThreadHandler.ENGINE_CAPTURE_INSTANCE_STATE, 0, event.getProcessInstanceId())
+        ExperimentUtils.timings.addSplit("Messaging Engine to Emigrate");
+        engineHandler.obtainMessage(EngineThreadHandler.ENGINE_CAPTURE_INSTANCE_STATE, event.getProcessInstanceId())
                 .sendToTarget();
-    }
-
-    private void haltProcessExecution(ActivitiActivityEvent event) {
-        experimentLog("Suspending process instance");
-        RuntimeService runtimeService = event.getEngineServices().getRuntimeService();
-        runtimeService.suspendProcessInstanceById(event.getProcessInstanceId());
     }
 
     @Override

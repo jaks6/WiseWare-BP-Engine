@@ -24,13 +24,16 @@ public class EngineThreadHandler extends Handler {
 
         switch (command){
             case ENGINE_THREAD_MSG_DEPLOY_PROCESS:
-                mEngineThread.deployProcess();
+                String resourceName = (String) msg.obj;
+                mEngineThread.deployProcess(resourceName);
                 break;
             case ENGINE_THREAD_MSG_RUN_PROCESS:
-                mEngineThread.startProcess();
+                String processKey = (String) msg.obj;
+                mEngineThread.startProcess(processKey);
                 break;
             case ENGINE_CAPTURE_INSTANCE_STATE:
-                mEngineThread.emigrateProcess((String)msg.obj);
+                String processInstanceId = (String) msg.obj;
+                mEngineThread.emigrateProcess(processInstanceId);
                 break;
             case ENGINE_LOAD_STATE_TO_DB:
                 mEngineThread.immigrateProcess();

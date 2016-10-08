@@ -7,6 +7,10 @@ public interface EngineInterface {
 
     void startProcess(String processId);
     void deployProcess(String processKey);
-    EngineStatusDescriber getEngineStatus();
+    void getEngineStatus(RunnableListener callback);
+
+    interface RunnableListener<T> {
+        void onResult(T arg);
+    }
 
 }

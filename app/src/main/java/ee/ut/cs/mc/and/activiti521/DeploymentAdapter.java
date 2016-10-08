@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.activiti.engine.repository.ProcessDefinition;
 
 import ee.ut.cs.mc.and.activiti521.engine.ActivitiServiceManager;
+import ee.ut.cs.mc.and.activiti521.engine.EngineStatusDescriber;
 
 /**
  * Created by J-Kool on 04/10/2016.
@@ -22,6 +24,7 @@ public class DeploymentAdapter extends ArrayAdapter<ProcessDefinition> {
 
 
     private static final String TAG = DeploymentAdapter.class.getName();
+    private ProgressBar mProgressbar;
     private ActivitiServiceManager mActivitiManager;
 
     Handler mHandler;
@@ -55,28 +58,50 @@ public class DeploymentAdapter extends ArrayAdapter<ProcessDefinition> {
 
 
 
-    public DeploymentAdapter(Context context) {
+    public DeploymentAdapter(Context context, View view) {
         super(context, R.layout.deployment_listitem);
         mHandler = new Handler(Looper.getMainLooper());
+
+        mProgressbar = (ProgressBar) view.findViewById(R.id.loadingCircle);
+
+
+        mActivitiManager = new ActivitiServiceManager(getContext());
+        mActivitiManager.startService();
+        mActivitiManager.bindToService();
         setUpDynamicBehaviour();
     }
 
     private void setUpDynamicBehaviour() {
-        mActivitiManager = new ActivitiServiceManager(getContext());
-        mActivitiManager.startService();
-        mActivitiManager.bindToService();
 
-
+        final HandlerCallback<EngineStatusDescriber> engineStatsCallback =
+                new HandlerCallback<EngineStatusDescriber>(mHandler) {
+            @Override
+            protected void handle(EngineStatusDescriber stats) {
+                removeLoadingCircleIfPresent();
+                clear();
+                addAll(stats.processDefinitions);
+                notifyDataSetChanged();
+            }
+        };
+        //runs repeatedly
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (mActivitiManager != null && mActivitiManager.isBound()){
-                    clear();
-                    addAll(mActivitiManager.getService().getEngineStatus().processDefinitions);
-                    notifyDataSetChanged();
+                    mActivitiManager.getService().getEngineStatus(engineStatsCallback);
                 }
                 mHandler.postDelayed(this, 2500);
             }
         }, 2000);
+
     }
+
+    private void removeLoadingCircleIfPresent() {
+        if (mProgressbar != null){
+            ((ViewGroup) mProgressbar.getParent()).removeView(mProgressbar);
+            mProgressbar = null;
+        }
+    }
+
+
 }

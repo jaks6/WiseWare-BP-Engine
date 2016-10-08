@@ -1,12 +1,9 @@
 package ee.ut.cs.mc.and.activiti521;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,16 +26,17 @@ public class MainActivity extends AppCompatActivity {
 
     Switch serviceSwitch;
     TextView statusTextView;
-    private DeploymentsFragment deploymentsFg;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fm = getFragmentManager();
-        deploymentsFg = (DeploymentsFragment) fm.findFragmentById(R.id.fragmentDeployments);
+
+        statusTextView = (TextView) findViewById(R.id.textView_serviceStatus);
+        serviceSwitch = (Switch) findViewById(R.id.switch2);
+
+        statusTextView.setText("Initializing...");
 
         //Start Activiti Service, create client to interact with it
         activitiManager = new ActivitiServiceManager(this);
@@ -59,38 +57,30 @@ public class MainActivity extends AppCompatActivity {
 
         setUpPeriodicEngineStatsUpdates();
 
-        statusTextView = (TextView) findViewById(R.id.textView_serviceStatus);
-        serviceSwitch = (Switch) findViewById(R.id.switch2);
-
+        Log.i(TAG, "Initialized MainActivity on Thread="+Thread.currentThread().getId());
     }
 
     private void setUpPeriodicEngineStatsUpdates() {
-        final UiCallbackRunner<EngineStatusDescriber> callback = initEngineStatsCallback();
+        //Defines the behaviour on UI thread when an @EngineStatusDescriber is received
+        final HandlerCallback<EngineStatusDescriber> engineStatsCallback =
+                new HandlerCallback<EngineStatusDescriber>(mHandler){
+            @Override
+            protected void handle(EngineStatusDescriber stats) {
+                statusTextView.setText(String.format("Running instance count:\t%s\nProcess definition count:\t%s",
+                        stats.runningInstances.size(),
+                        stats.processDefinitions.size()));
+            }
+        };
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (activitiManager.isBound()) {
-                    activitiManager.getService().getEngineStatus(callback);
+                    activitiManager.getService().getEngineStatus(engineStatsCallback);
                 }
                 mHandler.postDelayed(this, 3000);
             }
         }, 1000);
-    }
-
-    /*
-    *   Defines the behaviour on UI thread when an @EngineStatusDescriber is received
-    */
-    @NonNull
-    private UiCallbackRunner<EngineStatusDescriber> initEngineStatsCallback() {
-        return new UiCallbackRunner<EngineStatusDescriber>(this){
-            @Override
-            protected void uiHandle(EngineStatusDescriber stats) {
-                statusTextView.setText(String.format("Running instance count: %s\nProcess definition count: %s",
-                        stats.runningInstances.size(),
-                        stats.processDefinitions.size()));
-            }
-        };
     }
 
     private void updateProcessInstanceCount(int runningInstanceCount) {
@@ -140,6 +130,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void runButtonClicked(View v) {
         Log.i(TAG, "Run button clicked.");
-        activitiManager.getService().startProcess(ExperimentUtils.PROCESS_KEY);
+        activitiManager.getService().startProcess(ExperimentUtils.PROCESS_KEY_WISEWARE);
     }
 }

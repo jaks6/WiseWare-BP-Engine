@@ -1,16 +1,12 @@
 package ee.ut.cs.mc.and.activiti521.engine;
 
-import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import ee.ut.cs.mc.and.activiti521.ExperimentUtils;
-import ee.ut.cs.mc.and.activiti521.UiCallbackRunner;
+import ee.ut.cs.mc.and.activiti521.HandlerCallback;
 
 /** Background-running, starts the Activiti Engine on a new Thread when the service is started */
 public class ActivitiService extends Service implements EngineInterface {
@@ -21,12 +17,19 @@ public class ActivitiService extends Service implements EngineInterface {
     private final ActivitiServiceBinder mBinder = new ActivitiServiceBinder();
 
 
-    public EngineStatusDescriber getEngineStatus(){
-        return new EngineStatusDescriber(engineThread.getProcessEngine());
+    public void getEngineStatus(final RunnableListener callback){
+        engineThread.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        EngineStatusDescriber describer =
+                                new EngineStatusDescriber(engineThread.getProcessEngine());
+                        callback.onResult(describer);
+                    }
+                });
     }
 
-    /** Fetching the result using a callback */
-    public void getEngineStatus(final UiCallbackRunner<EngineStatusDescriber> callback){
+    /** Fetching the result using a callback that will run on the UI thread*/
+    public void getEngineStatus(final HandlerCallback<EngineStatusDescriber> callback){
         engineThread.getHandler().post(
             new Runnable() {
                 @Override
@@ -38,15 +41,20 @@ public class ActivitiService extends Service implements EngineInterface {
         });
     }
 
-    public void startProcess(String processId){
+
+    public void startProcess(String processKey){
         engineThread.getHandler().obtainMessage(
-                EngineThreadHandler.ENGINE_THREAD_MSG_RUN_PROCESS).sendToTarget();
+                EngineThreadHandler.ENGINE_THREAD_MSG_RUN_PROCESS,
+                processKey
+        ).sendToTarget();
     }
 
 
-    public void deployProcess(String processKey){
+    public void deployProcess(String resourceName){
         engineThread.getHandler().obtainMessage(
-                EngineThreadHandler.ENGINE_THREAD_MSG_DEPLOY_PROCESS).sendToTarget();
+                EngineThreadHandler.ENGINE_THREAD_MSG_DEPLOY_PROCESS,
+                resourceName
+        ).sendToTarget();
     }
 
 

@@ -1,13 +1,9 @@
 package ee.ut.cs.mc.and.activiti521.engine;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.util.Log;
-
-import ee.ut.cs.mc.and.activiti521.UiCallbackRunner;
 
 /**
  * Handles Service start/stop, binding to service, provides pointer to service

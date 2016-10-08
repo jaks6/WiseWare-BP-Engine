@@ -11,12 +11,14 @@ import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.impl.jobexecutor.JobExecutor;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ee.ut.cs.mc.and.activiti521.ExperimentUtils;
@@ -24,6 +26,7 @@ import ee.ut.cs.mc.and.activiti521.engine.migration.MigrationListener;
 import ee.ut.cs.mc.and.activiti521.engine.migration.Migrator;
 
 import static ee.ut.cs.mc.and.activiti521.ExperimentUtils.experimentLog;
+import static ee.ut.cs.mc.and.activiti521.ExperimentUtils.timings;
 
 /**
  * Created by Jakob on 16.08.2016.
@@ -57,9 +60,7 @@ public class EngineThread extends HandlerThread {
             @Override
             public void run() {
                 startEngine();
-                if (ExperimentUtils.AUTO_DEPLOY_PROCESS) deployProcess();
-                if (ExperimentUtils.AUTO_START_PROCESS) startProcess();
-                if (ExperimentUtils.AUTO_IMMIGRATE) ExperimentUtils.experimentImmigration(mHandler);
+                ExperimentUtils.runExperimentIfApplicable(getInstance());
             }
         });
     }
@@ -78,15 +79,18 @@ public class EngineThread extends HandlerThread {
     }
 
     protected void emigrateProcess(String processInstanceId) {
-        if (migrator == null ){
+        if (migrator == null) {
             migrator = new Migrator(con);
         }
-        try {
-            migrator.captureDbStateToFile(processInstanceId);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        migrator.emigrateProcess(processInstanceId);
+        ExperimentUtils.finishedMigration(processInstanceId);
+    }
+    protected void emigrateProcesses(List<String> processInstanceIds) {
+        if (migrator == null) {
+            migrator = new Migrator(con);
         }
-        experimentLog("Finished Migration");
+        migrator.emigrateProcessList(processInstanceIds);
+//        ExperimentUtils.finishedMigration(processInstanceId);
     }
 
     public EngineThread() {
@@ -107,8 +111,12 @@ public class EngineThread extends HandlerThread {
                 .setJdbcUrl(url)
                 .setCreateDiagramOnDeploy(false)
 //	      		  .setHistory(HistoryLevel.NONE.getKey())
-                .setJobExecutorActivate(true) //Job executor true throws SQLDroid "not implemented" errors
+                .setAsyncExecutorActivate(true)
+                .setAsyncExecutorEnabled(true)
+                .setJobExecutorActivate(false) //Job executor true throws SQLDroid "not implemented" errors, but it should be ok
+
                 .buildProcessEngine();
+
         Log.i(TAG, "Process Engine built");
 
         repositoryService = processEngine.getRepositoryService();
@@ -118,26 +126,20 @@ public class EngineThread extends HandlerThread {
         runtimeService.addEventListener(new MigrationListener(mHandler));
     }
 
-    public void startProcess() {
-        Log.i(TAG, "Starting Process Instance using key:" + ExperimentUtils.PROCESS_KEY + " Thread ID=" + Thread.currentThread().getId());
+    public void startProcess(String processKey) {
+        Log.i(TAG, "Starting Process Instance using key:" + processKey + " Thread ID=" + Thread.currentThread().getId());
         Map<String, Object> variables = new HashMap<String, Object>();
         variables.put("employeeName", "Kermit");
         variables.put("numberOfDays", new Integer(4));
         variables.put("vacationMotivation", "I'm really tired!");
-        runtimeService.startProcessInstanceByKey(ExperimentUtils.PROCESS_KEY, variables);
+        runtimeService.startProcessInstanceByKey(processKey, variables);
     }
 
-    public void deployProcess() {
+    public void deployProcess(String classPathResource) {
         repositoryService.createDeployment()
-                .addClasspathResource(ExperimentUtils.PROCESS_RESOURCE_NAME_WISEWARE)
+                .addClasspathResource(classPathResource)
                 .deploy();
         Log.i(TAG, "Process Deployed! name = " + repositoryService.createProcessDefinitionQuery().list().get(0).getName());
-
-        repositoryService.createDeployment()
-                .addClasspathResource(ExperimentUtils.PROCESS_RESOURCE_NAME_TODO)
-                .deploy();
-        Log.i(TAG, "Process Deployed! name = " + repositoryService.createProcessDefinitionQuery().list().get(0).getName());
-
     }
 
     public void connectToDb(){
@@ -182,5 +184,9 @@ public class EngineThread extends HandlerThread {
 
     public boolean isEngineInitialized() {
         return processEngine != null;
+    }
+
+    public EngineThread getInstance() {
+        return this;
     }
 }

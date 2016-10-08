@@ -13,8 +13,11 @@ public class WiseWareTask  implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        Log.i(TAG, "Starting Task, sleeping 3s, Activity Name ="+ execution.getCurrentActivityName());
-        Thread.sleep(3000);
+        Log.i(TAG, String.format("Starting Task %s\t BPinstance=%s\t ThreadID=%s",
+                execution.getCurrentActivityName(),
+                execution.getProcessInstanceId(),
+                Thread.currentThread().getId()));
+        Thread.sleep(1000);
         Log.i(TAG, "Finished Task " + execution.getCurrentActivityName());
     }
 }

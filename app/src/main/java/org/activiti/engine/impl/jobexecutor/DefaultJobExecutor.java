@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultJobExecutor extends JobExecutor {
   
   private static Logger log = LoggerFactory.getLogger(DefaultJobExecutor.class);
-  
+
   protected int queueSize = 3;
   protected int corePoolSize = 3;
   protected int maxPoolSize = 10;
