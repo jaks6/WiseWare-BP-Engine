@@ -3,7 +3,6 @@ package ee.ut.cs.mc.and.activiti521.engine;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.activiti.engine.ProcessEngine;
@@ -11,22 +10,20 @@ import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.impl.jobexecutor.JobExecutor;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import ee.ut.cs.mc.and.activiti521.ExperimentUtils;
+import ee.ut.cs.mc.and.activiti521.Util;
 import ee.ut.cs.mc.and.activiti521.engine.migration.MigrationListener;
 import ee.ut.cs.mc.and.activiti521.engine.migration.Migrator;
 
 import static ee.ut.cs.mc.and.activiti521.ExperimentUtils.experimentLog;
-import static ee.ut.cs.mc.and.activiti521.ExperimentUtils.timings;
 
 /**
  * Created by Jakob on 16.08.2016.
@@ -47,7 +44,6 @@ public class EngineThread extends HandlerThread {
     private Migrator migrator;
 
     public Handler mHandler;
-    private LocalBroadcastManager broadcastManager;
 
     @Override
     public synchronized void start() {
@@ -65,12 +61,12 @@ public class EngineThread extends HandlerThread {
         });
     }
 
-    protected void immigrateProcess() {
+    protected void immigrateProcess(String fileName) {
         if (migrator == null ){
             migrator = new Migrator(con);
         }
         Log.i(TAG, "Reading .json and storing to DB...");
-        migrator.loadStateFromFileToDb();
+        migrator.loadStateFromFileToDb(fileName);
 
         experimentLog("Activating loaded instance");
         processEngine.getRuntimeService().activateProcessInstanceById(
@@ -85,12 +81,12 @@ public class EngineThread extends HandlerThread {
         migrator.emigrateProcess(processInstanceId);
         ExperimentUtils.finishedMigration(processInstanceId);
     }
-    protected void emigrateProcesses(List<String> processInstanceIds) {
+    protected void emigrateProcesses(String[] processInstanceIds) {
         if (migrator == null) {
             migrator = new Migrator(con);
         }
         migrator.emigrateProcessList(processInstanceIds);
-//        ExperimentUtils.finishedMigration(processInstanceId);
+        ExperimentUtils.finishedMigration(processInstanceIds);
     }
 
     public EngineThread() {
@@ -100,6 +96,7 @@ public class EngineThread extends HandlerThread {
 
     private void startEngine(){
         Log.d(TAG, "starting Engine on thread="+ Thread.currentThread().getId());
+
         connectToDb();
 
         // Get process engine
@@ -111,9 +108,9 @@ public class EngineThread extends HandlerThread {
                 .setJdbcUrl(url)
                 .setCreateDiagramOnDeploy(false)
 //	      		  .setHistory(HistoryLevel.NONE.getKey())
-                .setAsyncExecutorActivate(true)
-                .setAsyncExecutorEnabled(true)
-                .setJobExecutorActivate(false) //Job executor true throws SQLDroid "not implemented" errors, but it should be ok
+//                .setAsyncExecutorActivate(true)
+//                .setAsyncExecutorEnabled(true)
+                .setJobExecutorActivate(true) //Job executor true throws SQLDroid "not implemented" errors, but it should be ok
 
                 .buildProcessEngine();
 
@@ -148,8 +145,17 @@ public class EngineThread extends HandlerThread {
                 Log.e(TAG, "No SD Card");
             } else {
                 String dir = Environment.getExternalStorageDirectory()+File.separator+"myDirectory";
+
+
                 //create folder
-                new File(dir).mkdirs();
+                File file = new File(dir);
+                //TODO remove following?
+                if (ExperimentUtils.DELETE_FILES_ON_BOOT){
+                    Log.w(TAG, "\n[!] DELETING old migration files and databse!\n");
+                    Util.deleteDirectory(file);
+                }
+
+                file.mkdirs();
                 //create file
                 dbFile = new File(dir, "main.sqlite");
             }

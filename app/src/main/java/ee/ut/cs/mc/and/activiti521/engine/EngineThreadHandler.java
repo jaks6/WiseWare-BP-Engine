@@ -12,6 +12,7 @@ public class EngineThreadHandler extends Handler {
     public static final int ENGINE_THREAD_MSG_RUN_PROCESS = 2;
     public static final int ENGINE_CAPTURE_INSTANCE_STATE = 3;
     public static final int ENGINE_LOAD_STATE_TO_DB = 4;
+    public static final int EMIGRATE_PROCESS_INSTANCES = 5;
     private final EngineThread mEngineThread;
 
     public EngineThreadHandler(Looper looper, EngineThread engineThread) {
@@ -34,6 +35,10 @@ public class EngineThreadHandler extends Handler {
             case ENGINE_CAPTURE_INSTANCE_STATE:
                 String processInstanceId = (String) msg.obj;
                 mEngineThread.emigrateProcess(processInstanceId);
+                break;
+            case EMIGRATE_PROCESS_INSTANCES:
+                String[] processInstanceIds = (String[]) msg.obj;
+                mEngineThread.emigrateProcesses(processInstanceIds);
                 break;
             case ENGINE_LOAD_STATE_TO_DB:
                 mEngineThread.immigrateProcess();

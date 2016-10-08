@@ -52,24 +52,42 @@ public class MigrationListener implements ActivitiEventListener {
     }
 
     private void handleActivityCompletedEvent(ActivitiActivityEvent event) {
-        if ( ExperimentUtils.AUTO_EMIGRATE && counter >= ExperimentUtils.STEPS_BEFORE_EMIGRATION){
+        if ( ExperimentUtils.AUTO_EMIGRATE && counter == ExperimentUtils.STEPS_BEFORE_EMIGRATION){
             if (ExperimentUtils.emigratingProcessInstanceList.contains(event.getProcessInstanceId())){
                 Log.w(TAG, "Already emigrating process instance, skipping new emigration request. BPID="+event.getProcessInstanceId());
             } else {
                 ExperimentUtils.startingMigration(event);
-                haltProcessExecution(event);
+
+                String[] processInstanceIds = ExperimentUtils.getListOfBPsToMigrate(event);
+                haltProcessExecutions(event.getEngineServices().getRuntimeService(),processInstanceIds);
                 //TODO check if migration really possible/feasible at this point in execution
                 counter++;
-                createMigration(event);
+                createMigration(processInstanceIds);
             }
         } else {
             counter++;
         }
     }
 
+    private void createMigration(String[] processInstanceIds) {
+        experimentLog("Sending CAPTURE_INSTANCE_STATE msg");
+        ExperimentUtils.timings.addSplit("Messaging Engine to Emigrate");
+        engineHandler.obtainMessage(EngineThreadHandler.EMIGRATE_PROCESS_INSTANCES, processInstanceIds)
+                .sendToTarget();
+    }
+
     private void haltProcessExecution(ActivitiActivityEvent event) {
         experimentLog("Suspending Process Instance: "+ event.getProcessInstanceId());
         event.getEngineServices().getRuntimeService().suspendProcessInstanceById(event.getProcessInstanceId());
+    }
+
+    private void haltProcessExecutions(RuntimeService rs, String[] processInstanceIds) {
+        synchronized ( this){
+            for (String id : processInstanceIds) {
+                experimentLog("Suspending Process Instance: " + id);
+                rs.suspendProcessInstanceById(id);
+            }
+        }
     }
 
 

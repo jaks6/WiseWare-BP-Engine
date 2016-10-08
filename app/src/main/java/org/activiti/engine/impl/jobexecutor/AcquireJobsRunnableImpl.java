@@ -52,9 +52,9 @@ public class AcquireJobsRunnableImpl implements AcquireJobsRunnable {
       int maxJobsPerAcquisition = jobExecutor.getMaxJobsPerAcquisition();
 
       try {
-        log.info("{} attempting to acquire job", jobExecutor.getName());
+        log.debug("{} attempting to acquire job", jobExecutor.getName());
         AcquiredJobs acquiredJobs = commandExecutor.execute(jobExecutor.getAcquireJobsCmd());
-        log.info("{} acquire result===="+ acquiredJobs.size());
+        log.debug("{} acquire result===="+ acquiredJobs.size());
         for (List<String> jobIds : acquiredJobs.getJobIdBatches()) {
           jobExecutor.executeJobs(jobIds);
         }

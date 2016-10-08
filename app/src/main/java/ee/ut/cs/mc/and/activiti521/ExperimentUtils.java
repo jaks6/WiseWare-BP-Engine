@@ -5,6 +5,8 @@ import android.util.Log;
 import android.util.TimingLogger;
 
 import org.activiti.engine.delegate.event.ActivitiActivityEvent;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +25,9 @@ import ee.ut.cs.mc.and.activiti521.engine.migration.MigrationListener;
 public class ExperimentUtils {
 
     private static final String TAG = ExperimentUtils.class.getSimpleName();
-    public static final int NO_OF_INSTANCES_TO_RUN = 25;
+    public static final int NO_OF_INSTANCES_TO_RUN = 10;
     private static final String TIMER_TAG = "TimerTag";
+
 
     public static TimingLogger timings;
 
@@ -44,6 +47,8 @@ public class ExperimentUtils {
     // Immigration (loading process from outside)
     public static final boolean AUTO_IMMIGRATE = false;
     public static final String IMMIGRATION_PROC_INST_ID = "4";
+
+    public static final boolean DELETE_FILES_ON_BOOT = false;
 
     // Emigration (taking process from Engine and serializing it to file
     public static final boolean AUTO_EMIGRATE = true;
@@ -90,18 +95,32 @@ public class ExperimentUtils {
     }
 
     public static void finishedMigration(String processInstanceId) {
-        experimentLog("Finished Migration");
-        timings.addSplit("Finished Migration"+processInstanceId);
-        finishedMigrationsList.add(processInstanceId);
-        if (ExperimentUtils.finishedMigrationsList.size() == ExperimentUtils.NO_OF_INSTANCES_TO_RUN){
-            timings.dumpToLog();
-        }
+        finishedMigration(new String[]{processInstanceId});
     }
 
     public static void startingMigration(ActivitiActivityEvent event) {
         experimentLog("Migration start");
         if (MigrationListener.counter == STEPS_BEFORE_EMIGRATION) timings.reset();
         ExperimentUtils.timings.addSplit("Migration start");
-        ExperimentUtils.emigratingProcessInstanceList.add(event.getProcessInstanceId());
+//        ExperimentUtils.emigratingProcessInstanceList.add(event.getProcessInstanceId());
+    }
+
+    public static void finishedMigration(String[] processInstanceIds) {
+        experimentLog("Finished Migration");
+        timings.addSplit("Finished Migration"+ StringUtils.join(processInstanceIds, ";"));
+        timings.dumpToLog();
+    }
+
+    /** Get a list of running BP instance id's */
+    public static String[] getListOfBPsToMigrate(ActivitiActivityEvent event) {
+        List<ProcessInstance> instanceList = event.getEngineServices().getRuntimeService()
+                .createProcessInstanceQuery().list();
+
+        String[] instanceArray = new String[instanceList.size()];
+        for (int i = 0; i < instanceList.size(); i++) {
+            instanceArray[i] = instanceList.get(i).getProcessInstanceId();
+        }
+
+        return instanceArray;
     }
 }

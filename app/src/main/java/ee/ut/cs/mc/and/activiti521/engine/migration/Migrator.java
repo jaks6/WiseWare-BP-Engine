@@ -1,6 +1,13 @@
 package ee.ut.cs.mc.and.activiti521.engine.migration;
 
 import android.util.Log;
+import android.util.TimeUtils;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
+import org.mockito.internal.util.collections.ListUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 import ee.ut.cs.mc.and.activiti521.ExperimentUtils;
@@ -30,11 +39,11 @@ public class Migrator {
         mConnection = con;
     }
 
-    public void loadStateFromFileToDb() {
+    public void loadStateFromFileToDb(String fileName) {
         experimentLog("Starting loadStateFromFileToDb");
         JsonDeserializer deserializer = null;
         try {
-            deserializer = new JsonDeserializer(mConnection, "migration01.json");
+            deserializer = new JsonDeserializer(mConnection, fileName);
             deserializer.loadToDb();
             Log.i(TAG, "Finished DB operations.");
 
@@ -47,37 +56,38 @@ public class Migrator {
         }
         experimentLog("Finished loadStateFromFileToDb");
     }
-    private void captureDbStateToFile(List<String> processInstanceIds) throws SQLException {
-
-    }
-
-    public void captureDbStateToFile(String procInstId) throws SQLException {
-        ExperimentUtils.timings.addSplit("Starting DB state capture, BPID="+procInstId);
+    private void captureDbStateToFile(String[] processInstanceIds) throws SQLException {
+        ExperimentUtils.timings.addSplit("Starting DB state capture, BPID="+
+                StringUtils.join( processInstanceIds, "; "));
 
         Statement stmt = null;
         JsonSerializer migrationSerializer = null;
 
         try {
-            migrationSerializer = new JsonSerializer("migration"+procInstId+".json");
+            String timestamp = DateTime.now().toString();
+            timestamp = StringUtils.substring(timestamp, 5, 19);
+            migrationSerializer = new JsonSerializer("migration_"+timestamp+".json");
 
             for ( String table : SqlCommandUtil.tables) {
                 ExperimentUtils.timings.addSplit("Starting work on DB table: "+table);
                 stmt = mConnection.createStatement();
                 ResultSet rs = stmt.executeQuery(
-                        SqlCommandUtil.getQueryForProcessInstance(table, procInstId));
+                        SqlCommandUtil.getQueryForProcessInstanceList(table, processInstanceIds));
                 migrationSerializer.writeTable(rs, table);
+                if (stmt != null) stmt.close();
             }
             migrationSerializer.close();
         } catch (SQLException e ) {
             Log.e(TAG, e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (stmt != null) {
-                stmt.close(); //TODO should this be  moved into the for loop above?
-            }
         }
         ExperimentUtils.timings.addSplit("Finished DB state capture");
+
+    }
+
+    public void captureDbStateToFile(String procInstId) throws SQLException {
+        captureDbStateToFile( new String[]{procInstId} );
     }
 
     public void emigrateProcess(String processInstanceId) {
@@ -88,7 +98,7 @@ public class Migrator {
             }
         }
 
-    public void emigrateProcessList(List<String> processInstanceIds) {
+    public void emigrateProcessList(String[] processInstanceIds) {
         try {
             captureDbStateToFile(processInstanceIds);
         } catch (SQLException e) {
