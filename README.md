@@ -53,3 +53,21 @@ The following modules have been adapted:
 * DbSchemaCreate.java
 * MailActivityBehavior.java
 * Bpmn20NamespaceContext.java
+
+Known issues (by no means is this a definitive list):
+
+When querying the DB for process instances, e.g. with:
+
+```
+#!Java
+
+List<ProcessInstance> instanceList = event.getEngineServices().getRuntimeService()
+                .createProcessInstanceQuery().active().list();
+```
+The above code should filter process instances with the state "Active" and return a list of them. The filtering method "active()" causes this code to fail with the message:
+
+```
+#!java
+
+java.lang.ClassNotFoundException: Didn't find class "java.beans.Introspector" on path: DexPathList.......
+```
