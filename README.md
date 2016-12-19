@@ -1,3 +1,7 @@
+As presented in:
+J. Mass, C. Chang and S. Srirama, “WiseWare: A Device-to-Device-based Business Process Management System for Industrial Internet of Things,” in the 9th IEEE International Conference on Internet of Things (iThings 2016)
+, Chengdu, China (if given), 2016
+
 # Activiti 5.21 Android port #
 This port is based on work done by  [Kashif Dar et al.](http://www.sciencedirect.com/science/article/pii/S1574119214001862), who kindly shared the source code of their port of Activiti 5.13. This project is heavily based on the work done by them.
 This is a very experimental project, several modules have been removed or modified, so do not expect all of Activitis features to work.
