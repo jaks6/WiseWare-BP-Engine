@@ -41,7 +41,8 @@ public class EngineThreadHandler extends Handler {
                 mEngineThread.emigrateProcesses(processInstanceIds);
                 break;
             case ENGINE_LOAD_STATE_TO_DB:
-                mEngineThread.immigrateProcess();
+                String fileName = (String) msg.obj;
+                mEngineThread.immigrateProcess(fileName);
                 break;
         }
     }

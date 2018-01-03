@@ -25,7 +25,7 @@ import ee.ut.cs.mc.and.activiti521.engine.migration.MigrationListener;
 public class ExperimentUtils {
 
     private static final String TAG = ExperimentUtils.class.getSimpleName();
-    public static final int NO_OF_INSTANCES_TO_RUN = 10;
+    public static final int NO_OF_INSTANCES_TO_RUN = 1;
     private static final String TIMER_TAG = "TimerTag";
 
 
@@ -42,7 +42,7 @@ public class ExperimentUtils {
     public static final String PROCESS_KEY_TODO = "myProcess";
 
     public static final boolean AUTO_DEPLOY_PROCESS = true;
-    public static final boolean AUTO_START_PROCESS = true;
+    public static final boolean AUTO_START_PROCESS = false;
 
     // Immigration (loading process from outside)
     public static final boolean AUTO_IMMIGRATE = false;
@@ -51,7 +51,7 @@ public class ExperimentUtils {
     public static final boolean DELETE_FILES_ON_BOOT = false;
 
     // Emigration (taking process from Engine and serializing it to file
-    public static final boolean AUTO_EMIGRATE = true;
+    public static final boolean AUTO_EMIGRATE = false;
     public static final int STEPS_BEFORE_EMIGRATION = NO_OF_INSTANCES_TO_RUN * 5; //How many tasks to finish before triggering emigration
     //5 emigrates after parallel join
 
